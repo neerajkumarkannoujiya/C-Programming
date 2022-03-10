@@ -1,0 +1,35 @@
+#include<stdio.h>
+int binarySearch(int arr[],int size,int element){
+int low=0,mid,high=size;
+while( low<=high){
+
+mid = (low + high)/2;
+if(arr[mid]==element){
+	return mid;
+}
+if(arr[mid]>element){
+	high = mid-1;
+	
+}
+else{
+	low=mid+1;
+}
+}
+return -1;
+
+}
+int main(){
+	int arr[20],n,i,element;
+	printf("Enter the number of element in array : ");
+	scanf("%d",&n);
+	for(i=0;i<n;i++){
+		printf("Enter the %d element : \n",(i+1));
+		scanf("%d",&arr[i]);
+		
+	}
+    printf("Enter the element whose index you want: ");
+	scanf("%d",&element);
+	int val = binarySearch(arr,n,element);
+	printf("The element %d is found at %d index",element,val);
+	return 0;
+}
