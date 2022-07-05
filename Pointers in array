@@ -1,0 +1,12 @@
+// uses of pointers in array.
+
+#include<stdio.h>
+void main()
+{
+    int i,a[5],*p;
+    p=&a[0];
+    for(i=0;i<=4;i++)
+    scanf("%d",p+i);   //p+i k jagah pr &a[i] bhi likh saktey hain.
+    for(i=0;i<=4;i++)
+    printf("%d     ",*(p+i));  //*(p+i) k jahah pr a[i] bhi likh saktey hain.
+}
