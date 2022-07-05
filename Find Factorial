@@ -1,0 +1,23 @@
+// factorial finding programm.
+
+#include<stdio.h>
+void main()
+{
+    int k,a,b;
+    while(1)
+    {
+    int govisum(int);
+    printf("Enter the last natural number to where you want sum:");
+    scanf("%d",&a);
+    k=govisum(a);
+    printf("factorial value is :%d\n",k);
+    }
+}         
+int govisum(int a)
+{
+    int s;
+    if(a==1)          // here base case is used(see above).
+    return(a);
+    s=a+govisum(a-1);
+    return(s);
+}
