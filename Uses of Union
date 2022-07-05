@@ -1,0 +1,18 @@
+// Uses of union..
+
+union item              // formation of data types.
+{
+    int x;
+    float y;
+    char z; 
+};
+void main()
+{
+    union item i1;
+    i1.x=5;
+    printf("%d\n",i1.x);
+    i1.y=1.5;
+    printf("%f\n",i1.y);
+    i1.z='g';
+    printf("%c\n",i1.z);
+}
