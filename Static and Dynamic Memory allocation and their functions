@@ -1,0 +1,29 @@
+// static and dynamic memory allocation and their fxns.
+/*
+#include<stdio.h>
+#include<stdlib.h>
+void main()
+{
+    int a=5;       //SMA(static memory aallocation)
+    float b=10;    //SMA
+    int x[20];     //SMA
+    x[5]=16;
+    float *p;
+    if(1);
+    p=(float*)malloc(4); //malloc(4) fxn forms a block of 4 bytes. {DMA}
+                        //{malloc me by default garbage value rahta hain.}
+    *p=3.14; 
+    printf("%d\n%f\n%d\n%f\n",a,b,x[5],*p);
+
+
+    int *ptr;
+    ptr=calloc(5,2);//calloc fxn forms 5 blocks of 2,2 bytes. {DMA}
+                    //{calloc me by default 0 value rahta hain.}
+    *(ptr+0)=20;
+    *(ptr+1)=12;
+    *(ptr+2)=13;
+    *(ptr+3)=14;
+    *(ptr+4)=15;
+    printf("%d  %d  %d  %d  %d\n",*(ptr+1),*(ptr+2),*(ptr+3),*(ptr+4),*(ptr+0)); 
+    
+}
