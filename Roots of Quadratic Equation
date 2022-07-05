@@ -1,0 +1,32 @@
+// find the roots of quadratic equation....
+
+#include<stdio.h>
+#include<math.h>
+int main()
+{
+    double a,b,c,r1,r2,discr,realpart,imaginarypart;
+    printf("enter the cofficients of quadratic equation:\n");
+    scanf("%lf %lf %lf",&a,&b,&c);
+    discr=b*b-4*a*c;
+    printf("discriminant is: %lf\n",discr);
+    if(discr>0)
+    {
+        r1=(-b+sqrt(discr))/(2*a);
+        r2=(-b-sqrt(discr))/(2*a);
+        printf("root-1 is : %lf\n",r1);
+        printf("root-2 is : %lf\n",r2);
+    }
+    else if (discr==0)
+    {
+        r1=(-b/2*a);
+        printf("both roots are same and is %lf ",r1);
+    }
+    else
+    {
+        realpart=-b/(2*a);
+        imaginarypart=sqrt(-discr);
+        printf("root-1 is : %lf + i%lf\n",realpart,imaginarypart);
+        printf("root-2 is : %lf - i%lf\n",realpart,imaginarypart);
+    }
+    return 0;
+}
