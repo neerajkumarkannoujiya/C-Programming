@@ -1,0 +1,25 @@
+ Pattern Printing Programs(6)
+
++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+#include<stdio.h>
+void main()
+{
+    int i,j,n,space;
+    printf("enter the number of rows:");
+    scanf("%d",&n);
+    for(i=1;i<=n;i++)
+    {
+        for(space=1;space<=(n-i);space++)
+        {
+            printf(" ");
+        }
+        for(j=1;j<=i;j+=1)
+        {
+           printf("* "); // by removing the space after star we see the diff. pattern.
+        }
+        printf("\n");    
+    }
+}
+//Note: we only print the leading space(starting gap before first star in every rows) not trailling space.
