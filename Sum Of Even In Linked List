@@ -1,0 +1,72 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+struct Node{
+        int data;
+        struct Node *next;
+};
+
+void insertAtEnd(struct Node **head,int x)
+{
+        struct Node *newNode = NULL;
+        newNode = (struct Node*)malloc(sizeof(struct Node));
+        newNode->data=x;
+        newNode->next=newNode;
+        if(*head==NULL){
+                *head=newNode;
+                return;
+        }
+        struct Node *ptr = *head;
+        while(ptr->next!=*head){
+                ptr=ptr->next;
+        }
+        newNode->next=*head;
+        ptr->next=newNode;
+}
+
+
+void print(struct Node *head)
+{    
+        if(head==NULL){
+                printf("NULL");
+                return;
+        }
+        struct Node* ptr = head;
+        while(ptr->next!=head){
+                printf("%d -> ",ptr->data);
+                ptr=ptr->next;
+        }
+        printf("%d -> %d\n",ptr->data,ptr->next->data);
+}
+int main()
+{
+        int n;
+        int k;
+        printf("Enter the No of Elements : \n");
+        scanf("%d",&n);
+        struct Node *head=NULL;
+        printf("Enter the LinkedList Values : \n");
+        int a;
+        for(int i=0;i<n;i++){
+                scanf("%d",&a);
+                insertAtEnd(&head,a);
+        }
+        printf("The Circular LinkedList is \n");
+        print(head);
+        int sum =0; 
+        struct Node *ptr=head;
+        while(ptr->next!=head){
+                if((ptr->data)%2==0){
+                        sum=sum+ptr->data;
+                }
+                ptr=ptr->next;
+        }
+        if((ptr->next->data)%2==0){
+                printf("The Sum Of even No is : %d\n",(sum+(ptr->next->data)));
+        }else{
+                printf("The Sum Of even No is : %d\n",sum);
+        }
+
+
+        return 0;
+}
