@@ -1,0 +1,113 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+struct Node{
+        int data;
+        struct Node *next;
+};
+
+void insertAtEnd(struct Node **head,int x)
+{
+        struct Node *newNode = NULL;
+        newNode = (struct Node*)malloc(sizeof(struct Node));
+        newNode->data=x;
+        newNode->next=NULL;
+        if(*head==NULL){
+                *head=newNode;
+                return;
+        }
+        struct Node *ptr = *head;
+        while(ptr->next!=NULL){
+                ptr=ptr->next;
+        }
+        ptr->next=newNode;
+}
+/*
+
+void deleteStart(struct Node** head)
+{
+        if(head==NULL){
+                printf("Nothing To Delete/n");
+                return;
+        }
+        struct Node *temp=*head;
+        *head=temp->next;
+        free(temp);
+}
+
+
+
+
+void deleteAtEnd(struct Node** head)
+{
+        if(head==NULL){
+                printf("Nothing To Delete/n");
+                return;
+        }
+        if((*head)->next==NULL){
+                *head=NULL;
+                return;
+        }
+        struct Node *temp=*head;
+        while(temp->next->next!=NULL){
+                temp = temp->next;
+        }
+        temp->next=temp->next->next;
+}
+
+*/
+
+void deleteAtK(struct Node**head,int k)
+{
+        if(*head==NULL){
+                printf("The Linkedlist is EMPTY!!\n");
+                return;
+        }
+        if(k==1){
+                *head=(*head)->next;
+                return;
+        }
+        struct Node *ptr=*head;
+        for(int i=2;i<k && ptr->next!=NULL;i++){
+                ptr=ptr->next;
+        }
+        if(ptr->next==NULL){
+                printf("The index is Out of Bound!!\n");
+                return;
+        }
+        ptr->next=ptr->next->next;
+}
+
+
+
+void print(struct Node *head)
+{
+        while(head!=NULL){
+                printf("%d -> ",head->data);
+                head=head->next;
+        }
+        printf("NULL\n");
+}
+int main()
+{
+        int n;
+        int k;
+        printf("Enter the No of Elements : \n");
+        scanf("%d",&n);
+        printf("Enter the value of k : \n");
+        scanf("%d",&k);
+        struct Node *head=NULL;
+        printf("Enter the LinkedList Values : \n");
+        int a;
+        for(int i=0;i<n;i++){
+                scanf("%d",&a);
+                insertAtEnd(&head,a);
+        }
+        printf("The LinkedList is \n");
+        print(head);
+//      deleteStart(&head);
+//      deleteAtEnd(&head);
+        deleteAtK(&head,k);
+        print(head);
+        return 0;
+}
