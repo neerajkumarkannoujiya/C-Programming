@@ -1,0 +1,75 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+struct Node{
+        int data;
+        struct Node *next;
+};
+
+void insertAtEnd(struct Node **head,int x)
+{
+        struct Node *newNode = NULL;
+        newNode = (struct Node*)malloc(sizeof(struct Node));
+        newNode->data=x;
+        newNode->next=NULL;
+        if(*head==NULL){
+                *head=newNode;
+                return;
+        }
+        struct Node *ptr = *head;
+        while(ptr->next!=NULL){
+                ptr=ptr->next;
+        }
+        ptr->next=newNode;
+}
+
+void removeDuplicate(struct Node**head)
+{
+        if(*head==NULL)return;
+        struct Node* curr=*head;
+        struct Node* prev = NULL;
+        int hash[1000] = {0};
+        while(curr!=NULL){
+                if(hash[curr->data]==1){
+                        prev->next = curr->next;
+                        free(curr);
+                }
+                else{
+                        hash[curr->data]=1;
+                        prev = curr;
+                }
+                curr = prev->next;
+        }
+}
+
+void print(struct Node *head)
+{
+        while(head!=NULL){
+                printf("%d -> ",head->data);
+                head=head->next;
+        }
+        printf("NULL\n");
+}
+
+
+int main()
+{
+        int n;
+        int k;
+        printf("Enter the No of Elements : \n");
+        scanf("%d",&n);
+        struct Node *head=NULL;
+        printf("Enter the LinkedList Values : \n");
+        int a;
+        for(int i=0;i<n;i++){
+                scanf("%d",&a);
+                insertAtEnd(&head,a);
+        }
+        printf("The LinkedList is \n");
+        print(head);
+        printf("After removing Duplicates \n");
+        removeDuplicate(&head);
+        print(head);
+
+        return 0;
+}
