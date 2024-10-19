@@ -1,0 +1,87 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+
+struct Node* createNode(int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+    newNode->next = newNode;
+    return newNode;
+}
+
+// Function to insert a node at the end of the list
+void insertEnd(struct Node** head, int data) {
+    struct Node* newNode = createNode(data);
+    if (*head == NULL) {
+        *head = newNode;
+        return;
+    }
+
+    struct Node* temp = *head;
+    while (temp->next != *head) {
+        temp = temp->next;
+    }
+    newNode->next=temp->next;
+    temp->next = newNode;
+}
+
+// Function to print elements at multiples of k in a single pass
+void printAtMultiplesOfK(struct Node* head, int k) {
+        int index = 0;
+        struct Node* temp = head;
+        int count =0;
+        while(temp->next!=head){
+                count++;
+                temp = temp->next;
+        }
+        temp = head;
+        int times=0;
+        while (times!=(count+1)) {
+                if (index % k == 0) {
+                        printf("%d -> ", temp->data);
+                        times++;
+                }
+                temp = temp->next;
+                index++;
+        }
+        printf("NULL\n");
+}
+
+
+
+
+// Main function to test the implementation
+int main() {
+    struct Node* head = NULL;
+    int k = 3;
+
+    // Create the linked list: 12 -> 15 -> 18 -> 17 -> 19 -> 20 -> 22 -> NULL
+    insertEnd(&head, 12);
+    insertEnd(&head, 15);
+    insertEnd(&head, 18);
+    insertEnd(&head, 17);
+    insertEnd(&head, 19);
+    insertEnd(&head, 20);
+    insertEnd(&head, 22);
+
+    printf("Original Linked List: ");
+    struct Node* temp = head;
+    while (temp->next != head) {
+        printf("%d -> ", temp->data);
+        temp = temp->next;
+    }
+    printf("%d -> NULL\n",temp->data);
+
+    // Print elements at multiples of k (k = 3)
+    printf("Elements at indices that are multiples of %d: ", k);
+    printAtMultiplesOfK(head, k);
+
+    return 0;
+}
+
