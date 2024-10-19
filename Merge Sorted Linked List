@@ -1,0 +1,83 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+struct Node{
+        int data;
+        struct Node* next;
+};
+
+void insertAtEnd(struct Node **head,int data)
+{
+
+        struct Node *newNode = NULL;
+        newNode = (struct Node*)malloc(sizeof(struct Node));
+        newNode->data = data;
+        newNode->next = NULL;
+
+        if(*head==NULL){
+                *head = newNode;
+                return;
+        }
+
+        struct Node *ptr = *head;
+        while(ptr->next!=NULL){
+                ptr=ptr->next;
+        }
+        ptr->next = newNode;
+}
+
+void print(struct Node* head)
+{
+        while(head!=NULL){
+                printf("%d -> ",head->data);
+                head=head->next;
+        }
+        printf("NULL\n");
+}
+
+
+struct Node* mergeSorted(struct Node* l1,struct Node* l2)
+{
+        if(l1==NULL)return l2;
+        if(l2==NULL)return l1;
+
+        if(l1->data<l2->data){
+                l1->next=mergeSorted(l1->next,l2);
+                return l1;
+        }
+        else{
+                l2->next=mergeSorted(l1,l2->next);
+                return l2;
+        }
+}
+
+void main()
+{
+        struct Node* l1 = NULL;
+        struct Node* l2 = NULL;
+        int n;
+        printf("Enter the size of first Linked List : \n");
+        scanf("%d",&n);
+        printf("Enter The Node values : ");
+        int a;
+        for(int i=0;i<n;i++){
+                scanf("%d",&a);
+                insertAtEnd(&l1,a);
+        }
+        int m;
+        printf("Enter the size of second Linked List : \n");
+        scanf("%d",&m);
+        printf("Enter The Node values : ");
+        int b;
+        for(int i=0;i<m;i++){
+                scanf("%d",&b);
+                insertAtEnd(&l2,b);
+        }
+        struct Node* ans = mergeSorted(l1,l2);
+
+        printf("\nThe Sorted Linked List is : ");
+        print(ans);
+        printf("\n");
+
+
+}
