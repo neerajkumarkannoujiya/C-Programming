@@ -1,0 +1,94 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+struct Node{
+        int data;
+        struct Node *next;
+        struct Node *prev;
+};
+
+void insertAtEnd(struct Node **head,int x)
+{
+        struct Node *newNode = NULL;
+        newNode = (struct Node*)malloc(sizeof(struct Node));
+        newNode->data=x;
+        newNode->next=NULL;
+        newNode->prev=NULL;
+        if(*head==NULL){
+                *head=newNode;
+                return;
+        }
+        struct Node *ptr = *head;
+        while(ptr->next!=NULL){
+                ptr=ptr->next;
+        }
+        ptr->next=newNode;
+        newNode->prev=ptr;
+}
+
+
+void reverse(struct Node**head)
+{
+        struct Node* temp=NULL;
+        struct Node* curr=*head;
+        while(curr!=NULL){
+                temp = curr->prev;
+                curr->prev=curr->next;
+                curr->next=temp;
+
+                curr=curr->prev;
+        }
+
+        if(temp!=NULL){
+                *head = temp->prev;     
+        }
+
+}
+
+
+void print(struct Node *head)
+{
+        while(head!=NULL){
+                printf("%d -> ",head->data);
+                head=head->next;
+        }
+        printf("NULL\n");
+}
+
+/*
+void printR(struct Node*head)
+{
+        if(head==NULL)return;
+        printR(head->next);
+        printf("%d -> ",head->data);
+
+
+}
+
+*/
+
+
+int main()
+{
+        int n;
+        printf("Enter the No of Elements : \n");
+        scanf("%d",&n);
+        struct Node *head=NULL;
+        printf("Enter the LinkedList Values : \n");
+        int a;
+        for(int i=0;i<n;i++){
+                scanf("%d",&a);
+                insertAtEnd(&head,a);
+        }
+        printf("The LinkedList is \n");
+        print(head);
+        printf("The reverse of Linked List is : \n");
+//      printR(head);
+//      printf("NULL\n");
+        reverse(&head);
+        print(head);
+
+
+
+        return 0;
+}
