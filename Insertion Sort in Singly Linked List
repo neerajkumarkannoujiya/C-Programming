@@ -1,0 +1,87 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+struct Node{
+        int data;
+        struct Node *next;
+};
+
+void insertAtEnd(struct Node **head,int x)
+{
+        struct Node *newNode = NULL;
+        newNode = (struct Node*)malloc(sizeof(struct Node));
+        newNode->data=x;
+        newNode->next=NULL;
+        if(*head==NULL){
+                *head=newNode;
+                return;
+        }
+        struct Node *ptr = *head;
+        while(ptr->next!=NULL){
+                ptr=ptr->next;
+        }
+        ptr->next=newNode;
+}
+
+struct Node* sortedInsert(struct Node* sorted,struct Node* newNode)
+{
+        if(sorted==NULL || sorted->data>=newNode->data){
+                newNode->next = sorted;
+                sorted = newNode;
+        }
+        else{
+                struct Node* current = sorted;
+                while(current->next!=NULL && current->next->data<newNode->data){
+                        current = current->next;
+                }
+                newNode->next = current->next;
+                current->next=newNode;
+        }
+        return sorted;
+}
+
+
+void insertionSort(struct Node **head)
+{
+        struct Node* current = *head;
+        struct Node* sorted = NULL;
+
+        while(current!=NULL){
+                struct Node* next = current->next;
+                sorted = sortedInsert(sorted,current);
+                current = next;
+        }
+        *head = sorted;
+
+}
+
+
+
+void print(struct Node *head)
+{
+        while(head!=NULL){
+                printf("%d -> ",head->data);
+                head=head->next;
+        }
+        printf("NULL\n");
+}
+int main()
+{
+        int n;
+        int k;
+        printf("Enter the No of Elements : \n");
+        scanf("%d",&n);
+        struct Node *head=NULL;
+        printf("Enter the LinkedList Values : \n");
+        int a;
+        for(int i=0;i<n;i++){
+                scanf("%d",&a);
+                insertAtEnd(&head,a);
+        }
+        printf("The LinkedList is \n");
+        print(head);
+        printf("The Sorted Linked List is : \n");
+        insertionSort(&head);
+        print(head);
+        return 0;
+}
