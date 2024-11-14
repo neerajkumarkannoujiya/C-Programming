@@ -1,0 +1,100 @@
+Read n ints and make a BST in the same order. Print the tree in preorder, inorder and postorder
+traversals. Separate characters by '_'.
+Input: (n, x_i)
+4
+2 1 4 3
+Output:
+2_1_4_3_
+1_2_3_4_
+1_3_4_2_
+
+
+
+
+
+
+
+
+
+****************************************************************************************************************************************
+
+
+
+
+
+#include<stdio.h>
+#include<stdlib.h>
+
+struct Node {
+        int data;
+        struct Node* left;
+        struct Node* right;
+};
+
+struct Node* newNode(int data)
+{
+        struct Node* node = (struct Node*)malloc(sizeof(struct Node));
+        node->data = data;
+        node->left = node->right = NULL;
+        return node;
+}
+
+
+
+struct Node* insert(struct Node* root,int data)
+{
+        if(root==NULL)return newNode(data);
+        if(data<root->data){
+                root->left = insert(root->left,data);
+        }
+        else if(data>root->data){
+                root->right = insert(root->right,data);
+        }
+        return root;
+}
+
+void preOrder(struct Node* root)
+{
+        if(root==NULL)return;
+        printf("%d_",root->data);
+        preOrder(root->left);
+        preOrder(root->right);
+}
+
+void inOrder(struct Node* root)
+{
+        if(root==NULL)return;
+        inOrder(root->left);
+        printf("%d_",root->data);
+        inOrder(root->right);
+}
+
+
+void postOrder(struct Node* root)
+{
+        if(root==NULL)return;
+        postOrder(root->left);
+        postOrder(root->right);
+        printf("%d_",root->data);
+}
+
+
+
+int main()
+{
+        int n;
+        scanf("%d",&n);
+        struct Node* root = NULL;
+        for(int i=0;i<n;i++){
+                int val;
+                scanf("%d",&val);
+                root = insert(root,val);
+        }
+        preOrder(root);
+        printf("\n");
+        inOrder(root);
+        printf("\n");
+        postOrder(root);
+        printf("\n");
+        return 0;
+}                                                  
