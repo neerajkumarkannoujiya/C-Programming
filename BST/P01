@@ -1,0 +1,91 @@
+Read n ints and make a binary search tree (BST). Do k search operations to print results as y/n.
+Input: (n, x_i, k, y_i)
+4
+2 1 4 3
+3
+3 7 1
+Output:
+y
+n
+y
+
+
+
+
+
+
+*************************************************************************************************************************
+
+
+
+
+#include<stdio.h>
+#include<stdlib.h>
+
+struct Node {
+        int data;
+        struct Node* left;
+        struct Node* right;
+};
+
+struct Node* newNode(int data)
+{
+        struct Node* node = (struct Node*)malloc(sizeof(struct Node));
+        node->data = data;
+        node->left = node->right = NULL;
+        return node;
+}
+
+
+
+struct Node* insert(struct Node* root,int data)
+{
+        if(root==NULL)return newNode(data);
+        if(data<root->data){
+                root->left = insert(root->left,data);
+        }
+        else if(data>root->data){
+                root->right = insert(root->right,data);
+        }
+        return root;
+}
+
+int search(struct Node* root,int k)
+{
+        if(root==NULL)return 0;
+        if(root->data==k)return 1;
+        if(root->data>k){
+                return search(root->left,k);
+        }
+        return search(root->right,k);
+
+}
+
+
+int main()
+{
+        int n;
+        scanf("%d",&n);
+        struct Node* root = NULL;
+        for(int i=0;i<n;i++){
+                int val;
+                scanf("%d",&val);
+                root = insert(root,val);
+        }
+        int k;
+        scanf("%d",&k);
+        int val;
+        for(int i=0;i<k;i++){
+                scanf("%d",&val);
+                if(search(root,val)){
+                        printf("y\n");
+                }
+                else{
+                        printf("n\n");
+                }
+
+        }
+
+
+        return 0;
+}
