@@ -48,16 +48,7 @@ struct Node *insert(struct Node *root,int data)
 }
 
 
-int findPos(int arr[],int s,int e,int ele)
-{
-        for(int i=s;i<=e;i++){
-                if(arr[i]==ele)return i;
-        }
-        return -1;
-}
-
-
-struct Node* solve(int in[],int pre[],int st, int end,int *preInd)
+struct Node* solve(int post[],int pre[],int st, int end,int *preInd)
 {
         if(st>end){
                 return NULL;
@@ -66,19 +57,25 @@ struct Node* solve(int in[],int pre[],int st, int end,int *preInd)
         (*preInd)++;
         struct Node* root = create(ele);
         if(st==end)return root;
-        int pos = findPos(in,st,end,ele);
-        root->left = solve(in,pre,st,pos-1,preInd);
-        root->right = solve(in,pre,pos+1,end,preInd);
+
+        int pos;
+        for(pos=st;pos<=end;pos++){
+                if(post[pos]==pre[*preInd])break;
+        }
+        if(pos<=end){
+                root->left = solve(post,pre,st,pos,preInd);
+                root->right = solve(post,pre,pos+1,end-1,preInd);
+        }
         return root;
 }
 
 
-void printPostOrder(struct Node* root)
+void printInOrder(struct Node* root)
 {
         if(root==NULL)return;
-        printPostOrder(root->left);
-        printPostOrder(root->right);
+        printInOrder(root->left);
         printf("%d ",root->data);
+        printInOrder(root->right);
 }
 
 
@@ -88,22 +85,23 @@ int main()
         printf("Enter the no. of nodes : \n");
         scanf("%d",&n);
         int preOrder[n];
-        int inOrder[n];
-        printf("Enter inorder : \n");
+        int postOrder[n];
+        printf("Enter postorder : \n");
         for(int i=0;i<n;i++)
         {
-                scanf("%d",&inOrder[i]);
+                scanf("%d",&postOrder[i]);
         }
-        printf("Enter preorder : \n");
+        printf("Enter Preorder : \n");
         for(int i=0;i<n;i++)
         {
                 scanf("%d",&preOrder[i]);
         }
         int preInd = 0;
         printf("The PostOrder is : \n");
-        struct Node* root = solve(inOrder,preOrder,0,n-1,&preInd);
-        printPostOrder(root);
+        struct Node* root = solve(postOrder,preOrder,0,n-1,&preInd);
+        printInOrder(root);
         printf("\n");
 
         return 0;
 }
+
