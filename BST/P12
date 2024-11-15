@@ -1,0 +1,99 @@
+Find out the in-order successor and predecessor of a given node in a BST.
+
+
+
+
+
+
+**************************************************************************************************************************************************************
+
+
+
+#include<stdio.h>
+#include<stdlib.h>
+
+struct Node{
+        int data;
+        struct Node* left;
+        struct Node* right;
+};
+
+struct Node* newNode(int data)
+{
+        struct Node* node = (struct Node*)malloc(sizeof(struct Node));
+        node->data = data;
+        node->right = node->left = NULL;
+        return node;
+}
+
+struct Node* insert(struct Node* root,int data)
+{
+        if(root==NULL)return newNode(data);
+        if(data<root->data){
+                root->left = insert(root->left,data);
+        }
+        else if(data>root->data){
+                root->right = insert(root->right,data);
+        }
+        return root;
+}
+
+struct Node* findPred(struct Node* root)
+{
+        struct Node* curr = root->left;
+        while(curr || curr->right!=NULL){
+                curr = curr->right;
+        }
+        return curr;
+}
+
+struct Node * findSucc(struct Node* root)
+{
+        struct Node* curr = root->right;
+        while(curr || curr->left!=NULL){
+                curr = curr->left;
+        }
+        return curr;
+}
+
+void findPredSucc(struct Node* root,struct Node**pred,struct Node** succ,int k)
+{
+        if(root==NULL)return;
+        if(root->data==k){
+                if (root->left != NULL) {
+                        *pred = findPred(root);
+                }
+                if (root->right != NULL) {
+                        *succ = findSucc(root);
+                }
+
+        }
+        else if(root->data>k){
+                *succ = root;
+                findPredSucc(root->left,pred,succ,k);
+        }
+        else{
+                *pred = root;
+                findPredSucc(root->right,pred,succ,k);
+        }
+}
+
+int main()
+{
+        int n;
+        scanf("%d",&n);
+        struct Node* root = NULL;
+        int val;
+        for(int i =0;i<n;i++){
+                scanf("%d",&val);
+                root = insert(root,val);
+        }
+        struct Node* pred = NULL;
+        struct Node* succ  = NULL;
+        int key;
+        scanf("%d",&key);
+        findPredSucc(root,&pred,&succ,key);
+        printf("predecessor is %d and successor is %d",pred->data,succ->data);
+        printf("\n");
+        return 0;
+}
