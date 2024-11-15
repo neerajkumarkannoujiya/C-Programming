@@ -1,0 +1,71 @@
+
+ Given a Binary Search Tree, and an integer k. Print all the nodes which are at k distance from root.
+
+
+
+
+
+
+*************************************************************************************************************************
+
+
+
+
+
+
+#include<stdio.h>
+#include<stdlib.h>
+
+struct Node{
+        int data;
+        struct Node* left;
+        struct Node* right;
+};
+
+struct Node* newNode(int data)
+{
+        struct Node* node = (struct Node*)malloc(sizeof(struct Node));
+        node->data = data;
+        node->right = node->left = NULL;
+        return node;
+}
+
+struct Node* insert(struct Node* root,int data)
+{
+        if(root==NULL)return newNode(data);
+        if(data<root->data){
+                root->left = insert(root->left,data);
+        }
+        else if(data>root->data){
+                root->right = insert(root->right,data);
+        }
+        return root;
+}
+
+void printk(struct Node* root,int t)
+{
+        if(root==NULL)return;
+        if(t==0){
+                printf("%d ",(root->data));
+                return;
+        }
+        printk(root->left,t-1);
+        printk(root->right,t-1);
+}
+
+int main()
+{
+        int n;
+        scanf("%d",&n);
+        struct Node* root = NULL;
+        int val;
+        for(int i =0;i<n;i++){
+                scanf("%d",&val);
+                root = insert(root,val);
+        }
+        int k;
+        scanf("%d",&k);
+        printk(root,k);
+        printf("\n");
+        return 0;
+}
