@@ -1,0 +1,83 @@
+ Write a function which deletes all the terminal nodes in BST
+
+
+
+
+************************************************************************************************
+
+
+
+
+
+
+
+#include<stdio.h>
+#include<stdlib.h>
+
+struct Node{
+        int data;
+        struct Node* right;
+        struct Node* left;
+};
+
+struct Node* newNode(int data)
+{
+        struct Node* node = (struct Node*)malloc(sizeof(struct Node));
+        node->data = data;
+        node->left = node->right = NULL;
+        return node;
+}
+
+
+struct Node * insert(struct Node*root,int data)
+{
+        if(root==NULL)return newNode(data);
+        if(data > root->data){
+                root->right = insert(root->right,data);
+        }
+        if(data < root->data){
+                root->left = insert(root->left,data);
+        }
+        return root;
+}
+
+struct Node* deleteTer(struct Node* root)
+{
+        if(root==NULL)return NULL;
+        if(root->left==NULL && root->right==NULL){
+                free(root);
+                return NULL;
+        }
+
+        root->left = deleteTer(root->left);
+        root->right = deleteTer(root->right);
+        return root;
+}
+
+
+void printIn(struct Node * root)
+{
+        if(root==NULL)return;
+        printIn(root->left);
+        printf("%d ",root->data);
+        printIn(root->right);
+}
+
+
+int main()
+{
+        int n;
+        scanf("%d",&n);
+        struct Node* root = NULL;
+        int val;
+        for(int i=0;i<n;i++){
+                scanf("%d",&val);
+                root = insert(root,val);
+        }
+        printIn(root);
+        root = deleteTer(root);
+        printf("\n");
+        printIn(root);
+        printf("\n");
+        return 0;
+}
