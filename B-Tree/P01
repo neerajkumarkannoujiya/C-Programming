@@ -1,0 +1,364 @@
+Write a program to with positive integers as data to from a B-tree. Input is given in the following
+sequence: t, x1, x2, … xn . If xi is positive, it must be inserted. If it is negative, the value, if exists, should
+be removed. Input is read until it is zero. Then print all the values in the tree in level order traversal.
+Input:
+2
+2 1 3 7 4 -2 11 -7 8 -3 7 3 2 6 0
+
+
+
+
+
+
+
+
+*******************************************************************************************************************
+
+
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+#define MAX 100
+
+typedef struct BTreeNode {
+    int *keys;                // Array to store keys
+    int t;                    // Minimum degree
+    struct BTreeNode **child; // Array of child pointers
+    int n;                    // Current number of keys
+    bool leaf;                // True if node is a leaf
+} BTreeNode;
+
+// Function to create a new BTreeNode
+BTreeNode *createNode(int t, bool leaf) {
+    BTreeNode *node = (BTreeNode *)malloc(sizeof(BTreeNode));
+    node->t = t;
+    node->leaf = leaf;
+    node->keys = (int *)malloc((2 * t - 1) * sizeof(int));
+    node->child = (BTreeNode **)malloc((2 * t) * sizeof(BTreeNode *));
+    node->n = 0;
+    return node;
+}
+
+// Function to perform level order traversal
+void levelOrder(BTreeNode *root) {
+    if (!root) return;
+
+    BTreeNode *queue[MAX];
+    int front = 0, rear = 0;
+
+    queue[rear++] = root;
+
+    while (front < rear) {
+        BTreeNode *node = queue[front++];
+
+        for (int i = 0; i < node->n; i++)
+            printf("%d ", node->keys[i]);
+
+        if (!node->leaf) {
+            for (int i = 0; i <= node->n; i++)
+                queue[rear++] = node->child[i];
+        }
+    }
+    printf("\n");
+}
+
+// Function to search a key in the tree
+BTreeNode *search(BTreeNode *root, int key) {
+    if (!root) return NULL;
+
+    int i = 0;
+    while (i < root->n && key > root->keys[i])
+        i++;
+
+    if (i < root->n && root->keys[i] == key)
+        return root;
+
+    if (root->leaf)
+        return NULL;
+
+    return search(root->child[i], key);
+}
+
+// Function to split a child node
+void splitChild(BTreeNode *parent, int i, BTreeNode *child) {
+    int t = child->t;
+    BTreeNode *newNode = createNode(t, child->leaf);
+    newNode->n = t - 1;
+
+    for (int j = 0; j < t - 1; j++)
+        newNode->keys[j] = child->keys[j + t];
+
+    if (!child->leaf) {
+        for (int j = 0; j < t; j++)
+            newNode->child[j] = child->child[j + t];
+    }
+
+    child->n = t - 1;
+
+    for (int j = parent->n; j >= i + 1; j--)
+        parent->child[j + 1] = parent->child[j];
+
+    parent->child[i + 1] = newNode;
+
+    for (int j = parent->n - 1; j >= i; j--)
+        parent->keys[j + 1] = parent->keys[j];
+
+    parent->keys[i] = child->keys[t - 1];
+    parent->n += 1;
+}
+
+// Function to insert a key in a non-full node
+void insertNonFull(BTreeNode *node, int key) {
+    int i = node->n - 1;
+
+    if (node->leaf) {
+        while (i >= 0 && key < node->keys[i]) {
+            node->keys[i + 1] = node->keys[i];
+            i--;
+        }
+        node->keys[i + 1] = key;
+        node->n += 1;
+    } else {
+        while (i >= 0 && key < node->keys[i])
+            i--;
+
+        if (node->child[i + 1]->n == 2 * node->t - 1) {
+            splitChild(node, i + 1, node->child[i + 1]);
+
+            if (key > node->keys[i + 1])
+                i++;
+        }
+        insertNonFull(node->child[i + 1], key);
+    }
+}
+
+// Function to insert a key
+BTreeNode *insert(BTreeNode *root, int key, int t) {
+    if (!root) {
+        root = createNode(t, true);
+        root->keys[0] = key;
+        root->n = 1;
+        return root;
+    }
+
+    if (root->n == 2 * t - 1) {
+        BTreeNode *newRoot = createNode(t, false);
+        newRoot->child[0] = root;
+        splitChild(newRoot, 0, root);
+
+        int i = (key > newRoot->keys[0]) ? 1 : 0;
+        insertNonFull(newRoot->child[i], key);
+
+        return newRoot;
+    } else {
+        insertNonFull(root, key);
+    }
+
+    return root;
+}
+
+// *************************** DELETE ********************
+
+void borrowFromPrev(BTreeNode *node, int idx);
+void borrowFromNext(BTreeNode *node, int idx);
+
+
+
+
+// Helper function to find the index of the key in the node
+int findKey(BTreeNode *node, int key) {
+    int idx = 0;
+    while (idx < node->n && node->keys[idx] < key)
+        ++idx;
+    return idx;
+}
+
+// Function to get the predecessor of the key
+int getPredecessor(BTreeNode *node, int idx) {
+    BTreeNode *cur = node->child[idx];
+    while (!cur->leaf)
+        cur = cur->child[cur->n];
+    return cur->keys[cur->n - 1];
+}
+
+// Function to get the successor of the key
+int getSuccessor(BTreeNode *node, int idx) {
+    BTreeNode *cur = node->child[idx + 1];
+    while (!cur->leaf)
+        cur = cur->child[0];
+    return cur->keys[0];
+}
+
+// Function to merge two children of a node
+void merge(BTreeNode *node, int idx) {
+    BTreeNode *child = node->child[idx];
+    BTreeNode *sibling = node->child[idx + 1];
+    int t = child->t;
+
+    child->keys[t - 1] = node->keys[idx];
+
+    for (int i = 0; i < sibling->n; ++i)
+        child->keys[i + t] = sibling->keys[i];
+
+    if (!child->leaf) {
+        for (int i = 0; i <= sibling->n; ++i)
+            child->child[i + t] = sibling->child[i];
+    }
+
+    for (int i = idx + 1; i < node->n; ++i)
+        node->keys[i - 1] = node->keys[i];
+
+    for (int i = idx + 2; i <= node->n; ++i)
+        node->child[i - 1] = node->child[i];
+
+    child->n += sibling->n + 1;
+    node->n--;
+
+    free(sibling);
+}
+
+// Function to fill a child node to ensure it has at least t keys
+void fill(BTreeNode *node, int idx) {
+    if (idx != 0 && node->child[idx - 1]->n >= node->t)
+        borrowFromPrev(node, idx);
+    else if (idx != node->n && node->child[idx + 1]->n >= node->t)
+        borrowFromNext(node, idx);
+    else {
+        if (idx != node->n)
+            merge(node, idx);
+        else
+            merge(node, idx - 1);
+    }
+}
+
+// Function to borrow a key from the previous sibling
+void borrowFromPrev(BTreeNode *node, int idx) {
+    BTreeNode *child = node->child[idx];
+    BTreeNode *sibling = node->child[idx - 1];
+
+    for (int i = child->n - 1; i >= 0; --i)
+        child->keys[i + 1] = child->keys[i];
+
+    if (!child->leaf) {
+        for (int i = child->n; i >= 0; --i)
+            child->child[i + 1] = child->child[i];
+    }
+
+    child->keys[0] = node->keys[idx - 1];
+
+    if (!child->leaf)
+        child->child[0] = sibling->child[sibling->n];
+
+    node->keys[idx - 1] = sibling->keys[sibling->n - 1];
+
+    child->n += 1;
+    sibling->n -= 1;
+}
+
+// Function to borrow a key from the next sibling
+void borrowFromNext(BTreeNode *node, int idx) {
+    BTreeNode *child = node->child[idx];
+    BTreeNode *sibling = node->child[idx + 1];
+
+    child->keys[child->n] = node->keys[idx];
+
+    if (!child->leaf)
+        child->child[child->n + 1] = sibling->child[0];
+
+    node->keys[idx] = sibling->keys[0];
+
+    for (int i = 1; i < sibling->n; ++i)
+        sibling->keys[i - 1] = sibling->keys[i];
+
+    if (!sibling->leaf) {
+        for (int i = 1; i <= sibling->n; ++i)
+            sibling->child[i - 1] = sibling->child[i];
+    }
+
+    child->n += 1;
+    sibling->n -= 1;
+}
+
+// Function to delete a key from the tree rooted at the given node
+BTreeNode *deleteKey(BTreeNode *node, int key) {
+    int idx = findKey(node, key);
+
+    if (idx < node->n && node->keys[idx] == key) {
+        if (node->leaf) {
+            for (int i = idx + 1; i < node->n; ++i)
+                node->keys[i - 1] = node->keys[i];
+            node->n--;
+        } else {
+            if (node->child[idx]->n >= node->t) {
+                int pred = getPredecessor(node, idx);
+                node->keys[idx] = pred;
+                deleteKey(node->child[idx], pred);
+            } else if (node->child[idx + 1]->n >= node->t) {
+                int succ = getSuccessor(node, idx);
+                node->keys[idx] = succ;
+                deleteKey(node->child[idx + 1], succ);
+            } else {
+                merge(node, idx);
+                deleteKey(node->child[idx], key);
+            }
+        }
+    } else {
+        if (node->leaf) {
+            printf("Key %d not found in the tree.\n", key);
+            return node;
+        }
+
+        bool flag = (idx == node->n);
+
+        if (node->child[idx]->n < node->t)
+            fill(node, idx);
+
+        if (flag && idx > node->n)
+            deleteKey(node->child[idx - 1], key);
+        else
+            deleteKey(node->child[idx], key);
+    }
+
+    if (node->n == 0) {
+        BTreeNode *tmp = node;
+        if (node->leaf)
+            node = NULL;
+        else
+            node = node->child[0];
+        free(tmp);
+    }
+    return node;
+}
+
+
+
+
+
+// ***********************************************************************
+
+int main() {
+    int t, value;
+    BTreeNode *root = NULL;
+
+    printf("Enter minimum degree (t): ");
+    scanf("%d", &t);
+
+    printf("Enter values (end with 0): ");
+    while (1) {
+        scanf("%d", &value);
+        if (value == 0) break;
+
+        if (value > 0)
+            root = insert(root, value, t);
+        else
+            root = deleteKey(root, -value);
+    }
+
+    printf("Level-order traversal of the B-tree:\n");
+    levelOrder(root);
+
+    return 0;
+}
